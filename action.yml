@@ -1,0 +1,22 @@
+name: "Determine Deployment Environment"
+description: "Outputs deployment environment based on Git branch or tag"
+inputs: {}
+outputs:
+  environment:
+    description: "The target deployment environment"
+    value: ${{ steps.set-env.outputs.environment }}
+runs:
+  using: "composite"
+  steps:
+    - id: set-env
+      run: |
+        echo "GITHUB_REF=$GITHUB_REF"
+        if [[ "$GITHUB_REF" == "refs/heads/develop" ]]; then
+          echo "environment=dev" >> $GITHUB_OUTPUT
+        elif [[ "$GITHUB_REF" == refs/heads/release/* ]]; then
+          echo "environment=staging" >> $GITHUB_OUTPUT
+        elif [[ "$GITHUB_REF" == refs/tags/v"* ]]; then
+          echo "environment=prod" >> $GITHUB_OUTPUT
+        else
+          echo "environment=unknown" >> $GITHUB_OUTPUT
+        fi
