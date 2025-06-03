@@ -9,14 +9,15 @@ runs:
   using: "composite"
   steps:
     - id: set-env
+      shell: bash
       run: |
         echo "GITHUB_REF=$GITHUB_REF"
         if [[ "$GITHUB_REF" == "refs/heads/develop" ]]; then
-          echo "environment=dev" >> $GITHUB_OUTPUT
+          echo "environment=develop" >> $GITHUB_OUTPUT
         elif [[ "$GITHUB_REF" == refs/heads/release/* ]]; then
           echo "environment=staging" >> $GITHUB_OUTPUT
         elif [[ "$GITHUB_REF" == refs/tags/v"* ]]; then
-          echo "environment=prod" >> $GITHUB_OUTPUT
+          echo "environment=release" >> $GITHUB_OUTPUT
         else
           echo "environment=unknown" >> $GITHUB_OUTPUT
         fi
