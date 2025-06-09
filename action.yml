@@ -5,6 +5,9 @@ outputs:
   environment:
     description: "The target deployment environment"
     value: ${{ steps.set-env.outputs.environment }}
+  tag:
+    description: "The tag of the deployment"
+    value: ${{ steps.set-env.outputs.tag }}
 runs:
   using: "composite"
   steps:
@@ -14,10 +17,13 @@ runs:
         echo "GITHUB_REF=$GITHUB_REF"
         if [[ "$GITHUB_REF" == "refs/heads/develop" ]]; then
           echo "environment=develop" >> $GITHUB_OUTPUT
+          echo "tag=$GITHUB_SHA" >> $GITHUB_OUTPUT
         elif [[ "$GITHUB_REF" == "refs/heads/release/"* ]]; then
           echo "environment=staging" >> $GITHUB_OUTPUT
+          echo "tag=$GITHUB_SHA" >> $GITHUB_OUTPUT
         elif [[ "$GITHUB_REF" == "refs/tags/v"* ]]; then
           echo "environment=release" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
         else
           echo "environment=unknown" >> $GITHUB_OUTPUT
         fi
